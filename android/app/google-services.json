@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "247927221313",
+    "project_id": "ufovni-54411",
+    "storage_bucket": "ufovni-54411.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247927221313:android:bc3ac491a145381df16ac0",
+        "android_client_info": {
+          "package_name": "com.ufoovni"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247927221313-mfolg09hq35vh7i7b4cvuqelnbe6qhlq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAJ8YZ9DWndqTVRvgtWJ0h653aMemBicA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247927221313-mfolg09hq35vh7i7b4cvuqelnbe6qhlq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

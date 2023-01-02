@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">UfoVni</string>
+ <string name="privacy_policy_url">file:///android/src/Screen/privacy/privacy_policy.html</string>
+</resources>
