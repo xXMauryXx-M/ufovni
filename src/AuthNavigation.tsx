@@ -7,7 +7,6 @@ import { StackNavigation } from './Navigation/StackNavigation';
 
 
  export const AuthNavigation = () => {
-
     const [currentUser, setcurrentUser] = useState(null)
     const userHandler= (user:any)=>
     user? setcurrentUser(user) :setcurrentUser(null)
