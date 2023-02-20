@@ -12,12 +12,11 @@ export const App = () => {
     SplashScreen.hide()
      }, [])
      
-
     // escucha notificaciones en background
       notifee.onBackgroundEvent(async ({ type, detail }) => {
        const { notification, pressAction } = detail;
        if (type === EventType.ACTION_PRESS ) {
-       console.log( "hola somos deails:",detail)
+       console.log( "este es el detail:",detail)
          // Remove the notification
           await notifee.cancelNotification(notification?.id!);
        }
@@ -25,8 +24,9 @@ export const App = () => {
 
   return (
     
-            <Provider store={Store} >
-                    <AuthNavigation/>
-            </Provider>
+
+             <Provider store={Store} >
+                     <AuthNavigation/>
+             </Provider>
   )
 }

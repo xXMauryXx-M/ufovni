@@ -24,7 +24,7 @@ export const PermisionSlice = createSlice({
          askLocationPermission:  (state,payload) => {
         
             state.LocationStatus=payload.payload
-         console.log(payload.payload)
+     
             
          
         

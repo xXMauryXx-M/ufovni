@@ -53,10 +53,9 @@ export const SelectPhotoUset = () => {
   :
   <Image
   style={{width:150, height:150, borderRadius:60}}
-  source={ {uri:uriTem}  }/>
+  source={ {uri:uriTem}}/>
 
 
-      
 }
 
  

@@ -4,11 +4,13 @@ import { PermisionSlice } from './Permision/PermisionSlide';
 import { ThemeSlice } from './Theme/ThemeSlice';
 
 
+
 export const Store=configureStore({
     reducer:{
      permision:PermisionSlice.reducer,
      form:FormSlice.reducer,
-     Theme:ThemeSlice.reducer
+     Theme:ThemeSlice.reducer,
+   
       
     }
 })

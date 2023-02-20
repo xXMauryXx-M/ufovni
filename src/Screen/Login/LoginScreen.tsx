@@ -21,19 +21,14 @@ export const LoginScreen = () => {
                 console.log('User signed in anonymously');
               })
               .catch(error => {
-                if (error.code === 'auth/user-not-found') {
-                Alert.alert("Error: Usuario o contraseña no validos")
-                }
-             
-                
+              Alert.alert("usuario o contraseña invalidos  ")
             
-                
               });
             
         
             
         } catch (error) {
-            Alert.alert("usuario o contraseña no son necesario ")
+            Alert.alert("usuario o contraseña invalidos  ")
             
         }
         

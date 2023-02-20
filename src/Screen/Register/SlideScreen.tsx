@@ -14,7 +14,7 @@ import { OnBoarding } from '../../Componets/OnBoarding';
 
  const {width,height}= Dimensions.get("window")
 
-
+//aca debemoa de pasar todo la info del resgister a la base de datos
 
 
 

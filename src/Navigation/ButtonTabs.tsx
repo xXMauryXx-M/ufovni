@@ -1,11 +1,8 @@
-import React,{useEffect} from 'react'
+import React from 'react'
 import { UfoHome } from '../Screen/UfoHome';
 import { ShootCamara } from '../Screen/ShootCamara';
-import { SettingScreen } from '../Screen/SettingScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { AppState } from 'react-native';
-import { checkLocationPermission } from '../Store/Permision/thunks';
 //poner este dentro de un stack navigation
 const Tab=createMaterialBottomTabNavigator()
  export const ButtonTabs = () => {

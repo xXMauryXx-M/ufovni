@@ -1,19 +1,23 @@
-
 import React,{useEffect,useRef,useCallback,useState} from "react"
-import { ActivityIndicator, View, Text, StyleSheet, Button, Linking, TouchableOpacity, Alert, Image } from 'react-native';
+import { ActivityIndicator, View, Text, StyleSheet, Button, Linking, TouchableOpacity, Alert, Image, AppState } from 'react-native';
 import { useCameraDevices, Camera} from "react-native-vision-camera"
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import { useIsFocused } from '@react-navigation/native';
 export const ShootCamara = () => {
-   let hours = new Date().getHours()
-   let minute = new Date().getMinutes()
-   let segundos = new Date().getSeconds()   
-   let HoraActual=`${hours-3}:${minute}:${segundos}`
-   const {inicialPosition,hasLocation}= useLocation()
+  // const isAppForeground = useIsForeground()
 
-   const [nombreUser, setnombreUser] = useState<FirebaseFirestoreTypes.DocumentData>()
-const [urlFirebaseStare, seturlFirebaseStare] = useState("")
-const [botonprecionado, setbotonprecionado] = useState(false)
+  const isFOcused=   useIsFocused()
+  const [nombreUser, setnombreUser] = useState<FirebaseFirestoreTypes.DocumentData>()
+  const [urlFirebaseStare, seturlFirebaseStare] = useState("")
+  const [botonprecionado, setbotonprecionado] = useState(false)
+  const navigation=useNavigation()
+  const devices=useCameraDevices()
+  const device= devices.back
+ const {HoraActual}=UseHours()
+ 
+   const {inicialPosition,hasLocation}= useLocation()
+   
    const cargarNombre=()=>{
      firestore().collection('users').doc(auth().currentUser?.email as any).get()
      .then(documentSnapshot => {
@@ -22,9 +26,6 @@ const [botonprecionado, setbotonprecionado] = useState(false)
        }
      }); 
    }
-   let nose= "file://"
-
-     
 
    const subirGeo=()=>{    
       
@@ -39,51 +40,28 @@ const [botonprecionado, setbotonprecionado] = useState(false)
 
  Alert.alert("Avistamiento reportado")
     } catch (error) {
-      console.log(error)
-      console.log("hubo un error")
+      console.log("hubo un error",error)
     }
    
-   }
-
-
-
-  const devices=useCameraDevices()
-  const device= devices.back
-
-  const navigation= useNavigation()
-   const comprobar=async()=>{
-     const cameraPermission = await Camera.getCameraPermissionStatus()
- //  console.log(cameraPermission)
    }
    const camera = useRef<Camera>(null)
    const sacarPhoto=async()=>{
     setbotonprecionado(true)
-   
     try {
       const photo = await camera.current!.takePhoto ({
-        enableAutoRedEyeReduction:true,
+        enableAutoRedEyeReduction:true
       })   
-
      
-     
-  let cortarUrl=photo.path.substring(40,58)
-  
-
+      let cortarUrl=photo.path.substring(40,58)
       const reference = storage().ref( `avistamietnosUser/${nombreUser?.nombre}/${cortarUrl}` )
       await reference.putFile(photo.path);
       
       const url = await storage().ref(`avistamietnosUser/${nombreUser?.nombre}/${cortarUrl}`).getDownloadURL()
       seturlFirebaseStare(url)
-   
-
-    } catch (error) {
-      Alert.alert("hubo un error ")
+    } catch (error:any) {
+      Alert.alert(error)
+    
     }
-   
- 
-
-
-
   }
 
      const requestCamaraPermision=useCallback(async()=>{
@@ -92,14 +70,16 @@ const [botonprecionado, setbotonprecionado] = useState(false)
    
 },[])
 useEffect(() => {
-  requestCamaraPermision()
+  // requestCamaraPermision()
   cargarNombre()
-  console.log(nombreUser);
+  
  }, [])
+
  const back=()=>{
   seturlFirebaseStare("")
   setbotonprecionado(!botonprecionado)
  }
+
 
 
  if (device == null) return <ActivityIndicator style={{marginTop:"50%"}}  color={"white"} size={60} />
@@ -107,17 +87,17 @@ useEffect(() => {
   if(urlFirebaseStare =="")
   return <Loading />
  }
+ 
   return(
      <View style={{flex:1, backgroundColor:"black"}} >  
     {
       urlFirebaseStare == "" ?  
        <Camera
-
       ref={camera}
       photo={true}
       style={{width:"100%",height:"100%"}}
       device={device}
-      isActive={true}
+      isActive={isFOcused}
       preset="photo"
       enableZoomGesture
     
@@ -136,8 +116,17 @@ useEffect(() => {
   {
   urlFirebaseStare == ""
   &&
+  <>
   <Icon style={{justifyContent:"flex-end",height:60, width:60 ,marginLeft:20, marginTop:510}} name="ellipse-outline" size={60} color="white" />   
- } 
+<TouchableOpacity onPress={()=>Alert.alert("click")} >
+  <Icon name="flash-outline"  color={"white"} size={40} style={{position:"absolute",bottom:570,right:200}}  />
+</TouchableOpacity>
+  
+
+  </>
+  
+  
+} 
 
   </TouchableOpacity>
  
@@ -156,8 +145,7 @@ useEffect(() => {
     </TouchableOpacity>  
   
 
-  
-  
+
   
   
  
@@ -223,6 +211,8 @@ import Geolocation from "@react-native-community/geolocation";
 import { Location, useLocation } from '../Hooks/useLocation';
 import auth from '@react-native-firebase/auth';
 import notifee, { AndroidVisibility } from '@notifee/react-native';
+import { useIsForeground } from '../Componets/useIsForeground';
+import { UseHours } from '../Hooks/UseHour';
 // export const ShootCamara = () => {
 //   const [tempUri, settempUri] = useState("")
    

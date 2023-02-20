@@ -1,17 +1,22 @@
 import React, {useRef,useState,useMemo,useCallback,useEffect } from 'react'
-import MapView, { Marker } from 'react-native-maps'
-import { StyleSheet, Image, View, TouchableOpacity, Text, Button, ActivityIndicator,  Alert, TouchableWithoutFeedback } from 'react-native';
+import MapView from 'react-native-maps'
+import { StyleSheet, View, TouchableOpacity,   Alert } from 'react-native';
 import { mapStyle } from '../Styles/Mpa';
-import { BottomSheetView,BottomSheetModalProvider, BottomSheetModal, BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { BottomSheetModalProvider, BottomSheetModal, BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {  useNavigation } from '@react-navigation/native';
 import { useLocation } from '../Hooks/useLocation';
-import firestore, { firebase, FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import distance from '@turf/distance';
-import notifee, { AndroidImportance, AndroidVisibility, EventType } from '@notifee/react-native';
-import { useSelector } from 'react-redux';
-import { DrawerContentScrollView } from '@react-navigation/drawer';
+import notifee, { AndroidImportance, AndroidVisibility } from '@notifee/react-native';
+import { LoadingScreen } from './LoadingScreen';
+import { BottomsAction } from './BottomsAction';
+import { BorrarAction } from './BorrarAction';
+import { PressLocation } from './PressLocation';
+import { Imagepicker } from './Imagepicker';
+import { Markers } from './Markers';
+
 
 interface GeoShot{
   hora:string,
@@ -23,33 +28,28 @@ interface GeoShot{
 }
 
  export const Map = () => {
-  const theme = useSelector((state:any)=>state.Theme)
+
   const mapViewRef=useRef<MapView>()
   const [rtData, setrtData] = useState([]) 
   const [nombreUser, setnombreUser] = useState<FirebaseFirestoreTypes.DocumentData>()
-  const [PhotoPerfil, setPhotoPerfil] = useState<FirebaseFirestoreTypes.DocumentData>()
-  const [infoUsers, setinfoUsers] = useState()  
   let site= "file://"
   const {inicialPosition,hasLocation,getCurrentLocation}= useLocation()
   const navigation= useNavigation<any>()
-  let nose= "file://"
   const [infoGeoShot, setinfoGeoShot] = useState<any>({})
-  const [horaactual, sethoraactual] = useState("")
    // Button Sheet
   const snapPoints = useMemo(() => ["25%", "43", "63%"], []);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const bottomSheetRef2 = useRef<BottomSheetModal>(null);
-const [lognpressBoll, setlognpressBoll] = useState(false)
-const [showCompass, setshowCompass] = useState(true)
+  const bottomSheetRef3=useRef<BottomSheetModal>(null)
+  const [lognpressBoll, setlognpressBoll] = useState(false)
+  const [showCompass, setshowCompass] = useState(true)
 //funciones button shet -navegation screen
 const handlePresentAPress = useCallback(() => {
   if (bottomSheetRef.current) {
     bottomSheetRef.current.present();
   }
 }, []);
-const ShowReport = useCallback(() => {
-    bottomSheetRef.current?.snapToIndex(2);
-}, []);
+
 const handlePresentBPress = useCallback(() => {
   if (bottomSheetRef2.current) {
     bottomSheetRef2.current.present();
@@ -66,6 +66,7 @@ const handleDismissAPress = useCallback(() => {
     bottomSheetRef2.current.dismiss();
   }
 }, []);
+
 
 
 async function onDisplayNotification(ele:any) {
@@ -103,51 +104,6 @@ async function onDisplayNotification(ele:any) {
     },
   });
 }
-
-useEffect(() => {
-  return notifee.onForegroundEvent (async({ type, detail }) => {
-    const { notification, pressAction } = detail;
-    switch (type) {
-      case EventType.DISMISSED:
-        await notifee.cancelNotification(notification?.id);
-      break;
-      case EventType.PRESS:
-
-      break;
-    }
-  });
-}, []);
-
-//probar parte de precionar una notificacion en foregund 
-  const cargarNombre=()=>{
-  firestore().collection('users').doc(auth().currentUser?.email as any).get()
-  .then(documentSnapshot => {
-    if (documentSnapshot.exists) {
-      setnombreUser (documentSnapshot.data());
-    }
-  });
-  }
-   const cargarUserPhoto=()=>{
-  firestore().collectionGroup("users").onSnapshot(querySnapshot=>{
-    const maz:any=[]
-    querySnapshot.forEach(documentSnapshot=>{
-        maz.push({
-            ...documentSnapshot.data(),
-            key:documentSnapshot.id
-        })
-    })
-
-
-
-    setPhotoPerfil(maz)
-    
-})
-  }
-  const MapearDatosPhoto=()=>{
-  PhotoPerfil?.map((el:any)=>(
-setinfoUsers(el.photoPerfil)
-  ))
-  }
   const  loadRTdata=()=>{
     const suscriber=  firestore().collectionGroup("geoShot").onSnapshot(querySnapshot=>{
         const maz:any=[]
@@ -172,9 +128,7 @@ setinfoUsers(el.photoPerfil)
 
  useEffect(()  => {
     loadRTdata()
-    cargarNombre()
-    cargarUserPhoto()
-    MapearDatosPhoto()  
+   
   }, [])
   
   
@@ -182,6 +136,7 @@ setinfoUsers(el.photoPerfil)
     handlePresentAPress()
     }, [hasLocation])
 
+    //manda la notificacion de ovni cerca 
    const obtenerCorrd=()=>{
      rtData.map((ele:any)=>{ 
        let from = [inicialPosition.latitude, inicialPosition.longitude]
@@ -201,20 +156,9 @@ setinfoUsers(el.photoPerfil)
  })}
  
  //funciones 
- const calcularNuevosReportes=()=>{
-  let hours = new Date().getHours()
-  let  minute = new Date().getMinutes()
-  let  segundos = new Date().getSeconds()
-   
-  let HoraActual=`${hours-3}:${minute}:${segundos}`
- let cortar2primros= HoraActual.substring(0,2)
- sethoraactual(cortar2primros)
- 
- }
 
- useEffect(() => {
-  calcularNuevosReportes()
- },[])
+
+ 
 
  useEffect(() => {
    obtenerCorrd()
@@ -236,11 +180,7 @@ if(longpress) {
    
  } 
 
-const handleChangeDirection=(item:any)=>{
-    setinfoGeoShot(item)
- handlePresentBPress()
 
-}
 const seguir=(item:any)=>{
   redireccion(item.latitud,item.longitud)
   handleDismisBPress()
@@ -259,71 +199,7 @@ const seguir=(item:any)=>{
   })
 }
  
-const BorrarPublicacion=(doc:any)=>{
 
-  Alert.alert(
-    "señor ufologo",
-    "esta apunto de eliminar completamente el avistamiento de la base de datos, si precionas ok no se borrara y sirviria de analisis  ",
-    [
-        {
-            text:"ok",
-            onPress:()=>{
-              firestore().collection("BaseDeDatosAvistamientos").add({
-                hora:doc.hora,
-                latitud:doc.latitud,
-                longitud:doc.longitud,
-                photo:doc.photo
-              }).then(()=>{
-                try {
-                  firestore()
-                  .collection('users').doc(auth().currentUser?.email as any).collection("geoShot")
-                  .doc(doc.key)
-                  .delete()
-                  .then(() => {
-                 
-                    handleDismisBPress()
-                  }).catch(()=>{
-                    Alert.alert("hubo un error")
-                  }) 
-                } catch (error) {
-                  Alert.alert("hubo un error")
-                }  
-              })
-             
-                
-            
-              
-            },
-            style:"cancel"
-            
-        },
-        {text:"borrar",  onPress:()=>{
-          try {
-            firestore()
-            .collection('users').doc(auth().currentUser?.email as any).collection("geoShot")
-            .doc(doc.key)
-            .delete()
-            .then(() => {
-              Alert.alert("Avistamiento borrado")
-            }).catch(()=>{
-              Alert.alert("hubo un error")
-            }) 
-          } catch (error) {
-            Alert.alert("hubo un error")
-          }
-        } }
-    ]
-    ,{
-        //puedes hacer click afuera para cerrarlo 
-        cancelable:false,
-   
-
-    }
-)
- 
- 
-
-}
 const onlongPreciondo=()=>{
   setlognpressBoll(true)
   setshowCompass(!showCompass)
@@ -334,34 +210,33 @@ const cancelarLongPress=()=>{
   setshowCompass(!showCompass)
 }
 
+const cargarNombre=()=>{
+  firestore().collection('users').doc(auth().currentUser?.email as any).get()
+  .then(documentSnapshot => {
+    if (documentSnapshot.exists) {
+      setnombreUser (documentSnapshot.data());
+    }
+  });
+  }
+  useEffect(() => {
+      cargarNombre() 
+  }, [])
+
  if( !hasLocation ) {
   return <LoadingScreen />
  }
  const latitudeDelta = 360 / Math.pow(2, 18);
-  const longitudeDelta = 360 / Math.pow(2, 18);
+ const longitudeDelta = 360 / Math.pow(2, 18);
 
   return(
   <View style={{flex:1}} >
   <MapView.Animated
   onLongPress={()=>onlongPreciondo()}
-  // onLongPress={()=>Alert.alert("longpress222")}
   ref={(el:any)=>mapViewRef.current=el!}
-  showsCompass={true}
-// onMapReady={()=>{
-//   mapViewRef.current?.setCamera(
-
-//     {
-//     zoom:12,
-//     duration:4000
-    
-    
-//   }
-
-
-
-//   )
-
-// }}
+   showsCompass={false}
+   showsScale={false}
+   minZoomLevel={15}
+   maxZoomLevel={15}
   userInterfaceStyle='dark'   
   zoomEnabled
   userLocationUpdateInterval={10000}
@@ -384,59 +259,13 @@ const cancelarLongPress=()=>{
  
        rtData.map((geo:GeoShot)=>  (
 
-
-<Marker
-
-  onPress={()=>PassInfoToBottomShet(geo,lognpressBoll)}             
-       coordinate={{
-          latitude:geo.latitud,
-          longitude:geo.longitud
-       }}
-       key={geo.key}
-     > 
-     {/* <TouchableOpacity onLongPress={()=>Alert.alert("ejucuion")} >
-     <Text style={{position:"absolute",fontSize:0}} >hola</Text>
-     </TouchableOpacity> */}
-
-
-
-{lognpressBoll ?  
-<Image
-style={{
-  position:"relative",
-  width:42,
-  height:42,
-  tintColor:geo.nombreUser==nombreUser?.nombre? "" : "white",
-}}
- source={ geo.nombreUser==nombreUser?.nombre?   require("../assets/beard.png") :null } 
- 
- />
-
-
-:
-
-<Image 
-style={{
-      position:"relative",
-      width:42,
-      height:42,
-      tintColor:geo.nombreUser==nombreUser?.nombre? "" : "white",
-    }}
-    source={ geo.nombreUser==nombreUser?.nombre?  require("../assets/beard.png") :  require("../assets/ufo.png")  } />
-
-
-}
-
-
-    
-  </Marker>
-
- 
-
-      
-        )
-       )
-      }
+ <Markers
+ PassInfoToBottomShet={PassInfoToBottomShet}
+ geo={geo}
+ lognpressBoll={lognpressBoll}
+ nombreUser={nombreUser}
+ /> //aun faltan cosas
+  ) )}
 
  </MapView.Animated>    
 {
@@ -461,21 +290,15 @@ style={styles.compass}
 
 }
 
-
-
       <TouchableOpacity 
      
           onPress={()=>  navigation.openDrawer()} 
           style={{position:"absolute",top:10 }}
         >          
-          <Icon name='menu-outline'size={50} color={theme.colors.border}/>            
+          <Icon name='menu-outline'size={50} color={"white"}/>            
       </TouchableOpacity> 
-   
-
-    
-
-
-    <BottomSheetModalProvider>
+  
+  <BottomSheetModalProvider>
         <BottomSheetModal
              style={{flex:1}}
              index={0}
@@ -484,45 +307,32 @@ style={styles.compass}
              backgroundStyle={{backgroundColor:"black"}}
              handleIndicatorStyle={{backgroundColor:"white"}}
              enablePanDownToClose={false}
+             detached={true}
+             enableOverDrag={false}
       >
-          <BottomSheetView focusHook={useFocusEffect} style={{flex:1}}>
-                  <Text style={{color:"white", fontSize:20, fontWeight:"bold"}}>   Hola {nombreUser?.nombre}!  </Text>               
-                  <View style={styles.buttonContainer} >      
-                          <TouchableOpacity onPress={()=>navigation.navigate("ShootCamara")}  style={{backgroundColor:"#0096f6",borderRadius:10,padding:10, width:120}} >
-                            <Text style={{color:"white", fontSize:20, paddingHorizontal:10, fontWeight:"900"}} >Capturar</Text>
-                          </TouchableOpacity>
-                      
-                          <TouchableOpacity  onPress={()=>navigation.openDrawer()} style={{backgroundColor:"#7A7575",borderRadius:10, padding:10, width:120}} >
-                            <Text style={{color:"white", fontSize:20, paddingHorizontal:14,fontWeight:"900"}} >Cuenta</Text>
-                          </TouchableOpacity>
+          
+            <BottomsAction 
+            bottomSheetRef={bottomSheetRef}
+            bottomSheetRef3={bottomSheetRef3}
+            bottomSheetRef2={bottomSheetRef2}
+            infoGeoShot={infoGeoShot}/>  
 
-                        <TouchableOpacity onPress={()=>ShowReport()}  style={{backgroundColor:"#DE1C14",borderRadius:10, padding:10, width:120}}  >
-                            <Text style={{color:"white", fontSize:20, paddingHorizontal:3,fontWeight:"900"}}  >Resportes</Text>
-                        </TouchableOpacity>
-                  </View>
-                  <Text style={styles.textReportsUltimos} >   Ultimos Reportesss {infoGeoShot.hora } </Text>
-          </BottomSheetView>
-     
           <BottomSheetFlatList
-             horizontal
+            enableFooterMarginAdjustment
+             horizontal={true}
+             key={Math.random()}
              showsHorizontalScrollIndicator
-             ItemSeparatorComponent={()=>{
-             return(<View style={{paddingHorizontal:4}} /> )}}
+             ItemSeparatorComponent={()=>{return(<View style={{paddingHorizontal:4}} />)}}
              data={rtData}
              renderItem={({item}:any)=>{
            
               return(
-               <View>
-                    <Text style={{color:"white", fontSize:20, fontWeight:"900", marginTop:30, marginLeft:20, marginBottom:5 }} >     {item?.nombreUser ==nombreUser?.nombre ? "Tu" : item?.nombreUser}</Text>    
-                    <TouchableOpacity 
-                       onPress={()=>handleChangeDirection(item)}
-                       style={{alignItems:"center"}} >  
-                        <Image
-                          style={{width:190, height:190,resizeMode:"cover"}}
-                          source={{uri: item.photo }}
-                        />               
-                    </TouchableOpacity>
-                </View>
+                 <Imagepicker
+                  item={item}
+                  setinfoGeoShot={setinfoGeoShot}
+                  handlePresentBPress={handlePresentBPress()}
+                  nombreUser={nombreUser}
+                 /> 
               )
              }}
              > 
@@ -531,72 +341,39 @@ style={styles.compass}
 
 {lognpressBoll? 
 
-<BottomSheetModal
-style={{flex:1}}
-index={1}
-ref={bottomSheetRef2}
-snapPoints={snapPoints}
-backgroundStyle={{backgroundColor:"black"}}
-handleIndicatorStyle={{backgroundColor:"white"}}
->
-<BottomSheetView  focusHook={useFocusEffect} style={{flex:1}}> 
+  <BottomSheetModal
+      style={{flex:1}}
+      index={1}
+      ref={bottomSheetRef2}
+      snapPoints={snapPoints}
+      backgroundStyle={{backgroundColor:"black"}}
+      handleIndicatorStyle={{backgroundColor:"white"}}>
 
-<Text style={{fontSize:17, color:"white" ,fontWeight:"600", marginLeft:20}} >Desea Borrar esta Publicacion <Icon name='trash-sharp' color={"white"} size={20} /> </Text>
-  <TouchableOpacity  onPress={()=>BorrarPublicacion(infoGeoShot)}  style={{backgroundColor:"red",borderRadius:10,padding:10, width:120, marginTop:20,alignSelf:"center"}} >
-      <Text style={{color:"white", fontSize:20, paddingHorizontal:20, fontWeight:"900"}} >Borrar</Text>
-  </TouchableOpacity>
-  <Text style={{color:"white", fontSize:20, fontWeight:"bold",alignSelf:"center"}}>{infoGeoShot.user} <Text style={{fontSize:15}} >{infoGeoShot.hora}</Text>   </Text>
-<View style={{alignItems:"center"}} >
-  <Image style={{width:300, height:260}} source={{uri:  infoGeoShot.photo  }}  />  
-</View>
+      <BorrarAction 
+          infoGeoShot={infoGeoShot}
+          handleDismisBPress={handleDismisBPress}
+      /> 
+  </BottomSheetModal>
+ :
+    <BottomSheetModal
+    style={{flex:1}}
+    index={1}
+    ref={bottomSheetRef2}
+    snapPoints={snapPoints}
+    backgroundStyle={{backgroundColor:"black"}}
+    handleIndicatorStyle={{backgroundColor:"white"}}
+    >
+    <PressLocation
+    handleDismissAPress={handleDismissAPress}
+    infoGeoShot={infoGeoShot}
+    nombreUser={nombreUser}
+    seguir={seguir}
+    /> 
 
-</BottomSheetView>
-
-</BottomSheetModal>
-
-
-
- : 
-
-
-<BottomSheetModal
-style={{flex:1}}
-index={1}
-ref={bottomSheetRef2}
-snapPoints={snapPoints}
-backgroundStyle={{backgroundColor:"black"}}
-handleIndicatorStyle={{backgroundColor:"white"}}
->
-<BottomSheetView  focusHook={useFocusEffect} style={{flex:1}}>         
-<View>
-   
-    <TouchableOpacity onPress={()=>handleDismissAPress()}>
-       <Icon style={{position:"absolute", right:0}}  name='close-outline' size={35}color="white" />
-    </TouchableOpacity>
-</View>
-<Text style={{color:"white", marginLeft:20}} >{infoGeoShot.nombreUser ==nombreUser?.nombre ? "Tu publicacion" : "No es tu poblicacion" }</Text>
- <Text style={{color:"white", fontSize:20, fontWeight:"bold",alignSelf:"center"}}>{infoGeoShot.user} <Text style={{fontSize:15}} >{infoGeoShot.hora}</Text>   </Text>
-<View style={{alignItems:"center"}} >
-  <Image style={{width:300, height:260}} source={{uri:  infoGeoShot.photo  }}  />  
-</View>
-<View style={{justifyContent:"space-around", flexDirection:"row", marginTop:"10%"}} >
-
-
-  <TouchableOpacity  onPress={()=>seguir(infoGeoShot)}  style={{backgroundColor:"#0096f6",borderRadius:10,padding:10, width:120}} >
-      <Text style={{color:"white", fontSize:20, paddingHorizontal:20, fontWeight:"900"}} >Seguir</Text>
-  </TouchableOpacity>
-</View>
-</BottomSheetView>
-
-</BottomSheetModal>
-
-
-
-
-
+    </BottomSheetModal>
 
 }
-         
+  
   </BottomSheetModalProvider>
   </View>
 
@@ -628,45 +405,5 @@ const styles = StyleSheet.create({
     backgroundColor:"#0096f6",
     borderRadius:10 
   },
-  buttonContainer:{
-    justifyContent:"space-around",
-    flexDirection:"row",
-   marginTop:"10%"
-
-  },
-  botonActions:{
-
-  },
-  textReportsUltimos:{
-    color:"white",
-     fontSize:20,
-      fontWeight:"900",
-       marginTop:30,
-        marginLeft:10,
-         marginBottom:5
-  }
 
 });
-
-  export const LoadingScreen = () => {
-    return (
-        <View style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor:"black"
-            
-            
-        }}>
-            <ActivityIndicator 
-                size={ 50 }
-                color="white"
-            />
-  
-    <Text style={{color:"white", fontSize:20, fontWeight:"600"}} >Porfavor Espere ...</Text> 
-  
-        </View>
-    )
-  }
-
-

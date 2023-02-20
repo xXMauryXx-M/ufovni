@@ -1,62 +1,14 @@
-import React,{useState,useRef, useCallback, useMemo,useEffect} from 'react'
-import { View, TouchableOpacity, Linking, Alert } from 'react-native';
+import React,{useEffect} from 'react'
+import { View, Linking, Alert } from 'react-native';
 import { Map } from '../Componets/Map';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { Text, Title } from 'react-native-paper';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { askLocationPermission } from '../Store/Permision/PermisionSlide';
 import { useSelector } from 'react-redux';
-import notifee, { AuthorizationStatus } from '@notifee/react-native';
 import { askLocationPermission1 } from '../Store/Permision/thunks';
-import NetInfo from "@react-native-community/netinfo";
-
-
-interface mark{
-  latitude:number,
-  longitude:number
-}
-
 export const UfoHome = () => {
-
-
-const unsubscribe = NetInfo.addEventListener(state => {
-
-    if(state.isConnected==false){
-  Alert.alert("esta aplicacion nesesita conecciona intener ")
- 
-}
-   });
-   console.log(unsubscribe)
-  useEffect(() => {
-    unsubscribe()
- 
-
-
-  }, [])
-  
-
- 
-  
-
-  async function checkNotificationPermission() {
-    const settings = await notifee.getNotificationSettings();
-  
-    if (settings.authorizationStatus == AuthorizationStatus.AUTHORIZED) {
-      console.log('Notification permissions has been authorized');
-    } else if (settings.authorizationStatus == AuthorizationStatus.DENIED) {
-  console.log("autorizacion denegada")
-    }
-    }
-  
-
   const {LocationStatus}=  useSelector((state:any)=>state.permision)
-
    useEffect(() => {
- console.log(LocationStatus)
     askLocationPermission1()
-if(LocationStatus=="denied"){
-  Alert.alert(
+   if(LocationStatus=="denied"){
+    Alert.alert(
     "Hola Ufologo",
     "para poder mostrar  el mapa es nesesario que aceptes los permisos de geolocalizacion  ",
     [
@@ -77,9 +29,6 @@ if(LocationStatus=="denied"){
 }
    }, [LocationStatus])
   
-   
-
-   
    return (
         <View style={{flex:1}} >     
             <Map/> 
@@ -113,4 +62,29 @@ if(LocationStatus=="denied"){
           strokeWidth={4}
           lineJoin="round"
         />
+
+         async function checkNotificationPermission() {
+    const settings = await notifee.getNotificationSettings();
+    if (settings.authorizationStatus == AuthorizationStatus.AUTHORIZED) {
+      console.log('Notification permissions has been authorized');
+    } else if (settings.authorizationStatus == AuthorizationStatus.DENIED) {
+  console.log("autorizacion denegada")
+    }
+    }
+
+
+      //elevar a la app 
+// useEffect(() => {
+//   return notifee.onForegroundEvent (async({ type, detail }) => {
+//     const { notification, pressAction } = detail;
+//     switch (type) {
+//       case EventType.DISMISSED:
+//         await notifee.cancelNotification(notification?.id!);
+//       break;
+//       case EventType.PRESS:
+
+//       break;
+//     }
+//   });
+// }, []);
         */}
