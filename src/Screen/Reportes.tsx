@@ -4,7 +4,7 @@ import { View, Text, TouchableWithoutFeedback, Image, KeyboardAvoidingView, Plat
 import * as  Yup from 'yup';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { TexCustomInput } from '../Componets/TexCustomInput';
+import { TexCustomInput } from '../Componets/helpers/TexCustomInput';
 export const Reportes = () => {
 
   useEffect(() => {

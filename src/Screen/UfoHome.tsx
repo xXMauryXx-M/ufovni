@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react'
 import { View, Linking, Alert } from 'react-native';
-import { Map } from '../Componets/Map';
+import { Map } from '../Componets/Mapa/Map';
 import { useSelector } from 'react-redux';
 import { askLocationPermission1 } from '../Store/Permision/thunks';
 export const UfoHome = () => {

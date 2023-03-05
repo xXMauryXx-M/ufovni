@@ -1,7 +1,7 @@
 import React,{useState} from "react"
 import { Text, View, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Formik, ErrorMessage } from 'formik';
-import { TexCustomInput } from "../../Componets/TexCustomInput";
+import { TexCustomInput } from "../../Componets/helpers/TexCustomInput";
 import * as Yup from 'yup';
 import { launchImageLibrary } from "react-native-image-picker";
 import firestore from '@react-native-firebase/firestore';

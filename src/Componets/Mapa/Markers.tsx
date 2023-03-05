@@ -21,7 +21,7 @@ style={{
   height:42,
   tintColor:geo.nombreUser==nombreUser?.nombre? "" : "white",
 }}
- source={ geo.nombreUser==nombreUser?.nombre &&  require("../assets/beard.png")  } 
+ source={ geo.nombreUser==nombreUser?.nombre &&  require(".../assets/beard.png")  } 
  
  />
 

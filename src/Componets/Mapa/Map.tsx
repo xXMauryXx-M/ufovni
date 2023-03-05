@@ -1,20 +1,21 @@
 import React, {useRef,useState,useMemo,useCallback,useEffect } from 'react'
 import MapView from 'react-native-maps'
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { mapStyle } from '../Styles/Mpa';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { mapStyle } from '../../Styles/Mpa';
 import { BottomSheetModalProvider, BottomSheetModal, BottomSheetFlatList, BottomSheetView } from '@gorhom/bottom-sheet';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {  useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useLocation } from '../Hooks/useLocation';
+import { useLocation } from '../../Hooks/useLocation';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import distance from '@turf/distance';
 import notifee, { AndroidImportance, AndroidVisibility } from '@notifee/react-native';
-import { LoadingScreen } from './LoadingScreen';
-import { BottomsAction } from './BottomsAction';
-import { AvistamientoUfo } from './AvistamientoUfo';
-import { Imagepicker } from './Imagepicker';
+
+import { BottomsAction } from '../BottomSheet/BottomsAction';
+import { AvistamientoUfo } from '../BottomSheet/AvistamientoUfo';
+import { Imagepicker } from '../BottomSheet/Imagepicker';
 import { Markers } from './Markers';
+// import { LoadingScreen } from '../helpers/LoadingScreen';
 interface GeoShot{
   hora:string,
   latitud:number,
@@ -195,7 +196,7 @@ const cancelarLongPress=()=>{
 }
 
  if( !hasLocation ) {
-  return <LoadingScreen />
+  return <Text>carga</Text>
  }
 const latitudeDelta = 360 / Math.pow(2, 18);
 const longitudeDelta = 360 / Math.pow(2, 18);
@@ -334,7 +335,7 @@ const longitudeDelta = 360 / Math.pow(2, 18);
       />  
        </BottomSheetModal>
  
-  </BottomSheetModalProvider>
+      </BottomSheetModalProvider>
   </View>
 )
 }

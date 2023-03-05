@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import  Icon  from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useAnimation } from '../../Hooks/useAnimation';
-import { OnBoarding } from '../../Componets/OnBoarding';
+import { OnBoarding } from '../../Componets/register/OnBoarding';
 
 // identifica O.V.N.I.s y subelo al mapa GPS para que mas personas lo vean
 //Descubre O.V.N.I.S serca de tu ubicacion

@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ErrorMessage, Formik } from 'formik';
 import * as Yup from 'yup';
-import { TexCustomInput } from '../../Componets/TexCustomInput';
+import { TexCustomInput } from '../../Componets/helpers/TexCustomInput';
 import { useSelector,useDispatch } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 

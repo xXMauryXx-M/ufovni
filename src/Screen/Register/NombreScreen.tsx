@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ErrorMessage, Formik } from 'formik';
 import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { TexCustomInput } from '../../Componets/TexCustomInput';
+import { TexCustomInput } from '../../Componets/helpers/TexCustomInput';
 import { useDispatch } from 'react-redux';
 import { GiveNombreForm } from '../../Store/form/FormSlice';
 import firestore, { firebase, FirebaseFirestoreTypes } from '@react-native-firebase/firestore';

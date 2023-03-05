@@ -1,7 +1,7 @@
 import React,{useState,useRef} from 'react'
 import { FlatList, ImageSourcePropType, Animated, Text, View, useWindowDimensions } from 'react-native';
 import { OnBoardingItems } from './OnBoardingItems';
-import { Paginator } from './Paginator';
+import { Paginator } from '../Paginator';
 
 
 interface Slide {

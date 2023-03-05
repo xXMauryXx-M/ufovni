@@ -1,6 +1,6 @@
 import React,{useState} from "react"
 import {Text,View} from "react-native"
-import { CustomSwitch } from '../../Componets/CustomSwitch';
+import { CustomSwitch } from '../../Componets/helpers/CustomSwitch';
 
 
 export const ConfigMapScreen=()=>{

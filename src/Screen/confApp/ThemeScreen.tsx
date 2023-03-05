@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react"
 import { Alert, Text, View, TouchableOpacity, Switch, Platform } from 'react-native';
 import { useDispatch } from "react-redux";
-import { CustomSwitch } from '../../Componets/CustomSwitch';
+import { CustomSwitch } from '../../Componets/helpers/CustomSwitch';
 import { DarkTheme, LigthTheme } from "../../Store/Theme/ThemeSlice";
 
 

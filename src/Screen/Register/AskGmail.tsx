@@ -5,7 +5,7 @@ import * as Yup from "yup"
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { TexCustomInput } from "../../Componets/TexCustomInput";
+import { TexCustomInput } from "../../Componets/helpers/TexCustomInput";
 import firestore from '@react-native-firebase/firestore';
 import { useSelector, useDispatch } from 'react-redux';
 import { GiveCoreoForm, GivePasswordForm } from "../../Store/form/FormSlice";
