@@ -5,7 +5,7 @@ import { View, Text, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export const PressLocation = ({handleDismissAPress,infoGeoShot,nombreUser,seguir}:any) => {
+export const AvistamientoUfo = ({handleDismissAPress,infoGeoShot,nombreUser,seguir}:any) => {
   return (
     <BottomSheetView  focusHook={useFocusEffect} style={{flex:1}}>         
     <View>

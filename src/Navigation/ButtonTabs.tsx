@@ -3,12 +3,8 @@ import { UfoHome } from '../Screen/UfoHome';
 import { ShootCamara } from '../Screen/ShootCamara';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-//poner este dentro de un stack navigation
 const Tab=createMaterialBottomTabNavigator()
  export const ButtonTabs = () => {
-   
-
-
   return (
     <Tab.Navigator
     backBehavior='initialRoute' 

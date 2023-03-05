@@ -12,7 +12,4 @@ import { StackNavigation } from './Navigation/StackNavigation';
     auth().onAuthStateChanged(user=>userHandler(user))
     }, [])  
       return <>{currentUser ? <MyDrawer/> : <StackNavigation/> }</>
-  
- 
    }
-

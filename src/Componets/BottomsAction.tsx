@@ -45,10 +45,7 @@ export const BottomsAction = ({bottomSheetRef,bottomSheetRef3,bottomSheetRef2,in
         }
       },[])
   return (
-    <BottomSheetView focusHook={useFocusEffect} style={{flex:1}}>
-                  
-                  
-          
+<View>
 <Text style={{color:"white", fontSize:20, fontWeight:"bold"}}>   Hola {nombreUser?.nombre}!  </Text>               
                   <View style={styles.buttonContainer} >      
                           <TouchableOpacity onPress={()=>navigation.navigate("ShootCamara")}  style={{backgroundColor:"#0096f6",borderRadius:10,padding:10, width:windowWith/3.1}} >
@@ -75,7 +72,9 @@ export const BottomsAction = ({bottomSheetRef,bottomSheetRef3,bottomSheetRef2,in
         
                  </TouchableOpacity>
 
-                 </BottomSheetView>
+</View>                                                
+    
+
   )
 }
 
