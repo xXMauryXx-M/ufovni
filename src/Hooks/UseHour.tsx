@@ -2,19 +2,14 @@
  export  const UseHours=()=>{
 
     let date = new Date()
-    var hours = date.getHours() - date.getTimezoneOffset()  / 60 -3
-    var amPm = hours >= 12 ? 'p.m.' : 'a.m.';
+
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'pm' : 'am';
     hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    let minute = new Date().getMinutes()
-    let segundos = new Date().getSeconds()  
-
-    let HoraActual;
-
-   
-     
-        
-        HoraActual=`${hours}:${minute} ${amPm}  `
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? 0 + minutes : minutes;
+    const formattedTime = hours + ':' + minutes + ' ' + ampm;
    
 
   
@@ -24,7 +19,7 @@
     
     
  return{
-  HoraActual  
+    formattedTime
  
  }
 

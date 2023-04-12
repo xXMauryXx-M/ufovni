@@ -11,7 +11,7 @@ const Tab=createMaterialBottomTabNavigator()
     sceneAnimationEnabled={true}
     barStyle={{
       height:60,
-      backgroundColor:"#000"
+      backgroundColor:"white"
     }}
     screenOptions={({route})=>({
       tabBarIcon:({color,focused})=>{

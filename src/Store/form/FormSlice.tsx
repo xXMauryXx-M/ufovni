@@ -1,10 +1,4 @@
-
 import { createSlice } from '@reduxjs/toolkit';
-import { PermissionStatus, request,PERMISSIONS } from 'react-native-permissions';
-import { Platform } from 'react-native';
-
-
-
 
 export interface  TypeForm{
     nombre:string,
@@ -24,7 +18,7 @@ export const initialState :TypeForm = {
   }
 
 export const FormSlice = createSlice({
-    name: "Form",
+    name:"Form",
     initialState,
     reducers: {
          GiveCoreoForm:  (state,payload) => {

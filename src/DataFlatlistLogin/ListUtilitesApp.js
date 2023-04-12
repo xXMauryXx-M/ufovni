@@ -1,9 +1,4 @@
-const { ConfigMapScreen } = require("../Screen/confApp/ConfigMapScreen");
-const { PerfilScreen } = require("../Screen/confApp/PerfilScreen");
-const { ThemeScreen } = require("../Screen/confApp/ThemeScreen");
-
- export  const AjustesItem=[
-    
+export const AjustesItem=[    
     {
         name:"Theme",
         componet:"ThemeScreen",

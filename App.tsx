@@ -7,11 +7,10 @@ import { AuthNavigation } from './src/AuthNavigation';
 import { enableLatestRenderer } from 'react-native-maps';
 import notifee,{EventType} from '@notifee/react-native';
  enableLatestRenderer();
-export const App = () => {  
+export const App = () =>{  
   useEffect(() => {
     SplashScreen.hide()
      }, [])
-     
     // escucha notificaciones en background
       notifee.onBackgroundEvent(async ({ type, detail }) => {
        const { notification, pressAction } = detail;

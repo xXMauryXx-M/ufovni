@@ -133,7 +133,7 @@ export const LoginScreen = () => {
            style={styles.button}
            activeOpacity={0.8}
            >
-          <Text style={{fontSize:20, color:"white",  }} > Siguiente </Text>
+          <Text style={{fontSize:20, color:"white"  }} > Siguiente </Text>
        
        </TouchableOpacity>
     

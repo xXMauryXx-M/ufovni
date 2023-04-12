@@ -18,8 +18,7 @@ interface valoresGmail {
 
  export  const AskGmail=()=>{
     const {correo,contraseña,nombre}=  useSelector((state:any)=>state.form)
-    console.log(correo,contraseña,nombre);
-    
+
    const dispatch= useDispatch<any>()
 
     const navigation= useNavigation<any>()
@@ -123,7 +122,7 @@ interface valoresGmail {
 
 
 
-<View style={{marginTop:100}} >
+<View style={{marginTop:10}} >
  
  <TouchableOpacity 
  
@@ -132,7 +131,7 @@ interface valoresGmail {
        style={styles.button}
        activeOpacity={0.8}
        >
-      <Text style={{fontSize:20, color:"white",  }} > Siguiente </Text>
+      <Text style={{fontSize:20, color:"white" }} > Siguiente </Text>
    
    </TouchableOpacity>
 
@@ -178,6 +177,6 @@ const styles = StyleSheet.create({
         borderRadius:20,
         justifyContent:"center",
         alignItems:"center",
-        marginLeft:20
+        marginLeft:20,
     },
 });

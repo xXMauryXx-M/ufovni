@@ -5,7 +5,7 @@ import {useNavigation} from "@react-navigation/native"
 
 import { Item } from "react-native-paper/lib/typescript/components/List/List";
 import auth from '@react-native-firebase/auth';
-import { AjustesItem } from "../data/ListConfig";
+import { AjustesItem } from "../DataFlatlistLogin/ListUtilitesApp";
 
 export const Prueba=()=>{
 

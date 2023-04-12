@@ -30,7 +30,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
   console.log(nombreUser?.photoPerfil)
   
   return(
-      <View style={{flex:1,backgroundColor:theme.colors.background}} >
+      <View style={{flex:1,backgroundColor:"black"}} >
                       <View style={{height:250,width:"100%", justifyContent:"center",alignItems:"center"}} >
                             <Image
                               source={{uri:nombreUser?.photoPerfil}}
@@ -89,7 +89,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
       width:150,
       height:150,
       borderRadius:100,
-      backgroundColor:"blue"
+
     },
     avartarContent:{
     alignItems:"center",

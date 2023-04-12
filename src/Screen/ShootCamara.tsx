@@ -1,23 +1,35 @@
 import React,{useEffect,useRef,useCallback,useState} from "react"
-import { ActivityIndicator, View, Text, StyleSheet, Button, Linking, TouchableOpacity, Alert, Image, AppState } from 'react-native';
-import { useCameraDevices, Camera} from "react-native-vision-camera"
+import { ActivityIndicator, View, Text, Linking, TouchableOpacity, Alert, Image, StyleSheet, useWindowDimensions } from 'react-native';
+import { useCameraDevices,  Camera, CameraPermissionRequestResult} from "react-native-vision-camera"
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import {PermissionsAndroid} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { UseHours } from '../Hooks/UseHour';
+import auth from '@react-native-firebase/auth';
+import { useLocation } from "../Hooks/useLocation";
+import { useSelector } from 'react-redux';
 export const ShootCamara = () => {
-  // const isAppForeground = useIsForeground()
-
-  const isFOcused=   useIsFocused()
+  const isFOcused= useIsFocused()
   const [nombreUser, setnombreUser] = useState<FirebaseFirestoreTypes.DocumentData>()
-  const [urlFirebaseStare, seturlFirebaseStare] = useState("")
+  const [urlFirebaseStore, seturlFirebaseStore] = useState("")
   const [botonprecionado, setbotonprecionado] = useState(false)
-  const navigation=useNavigation()
   const devices=useCameraDevices()
   const device= devices.back
- const {HoraActual}=UseHours()
+  const {formattedTime}=UseHours()
+  const [,setpermissionsCamara]=useState<CameraPermissionRequestResult>()
+  const {inicialPosition}= useLocation()
+  const {width,height} =useWindowDimensions()
+  const camera = useRef<Camera>(null)
+  const [flashOn, setFlashOn] = useState(false);
+  const  navigation =useNavigation<any>()
+  const {photoPerfil}=  useSelector((state:any)=>state.form)
  
-   const {inicialPosition,hasLocation}= useLocation()
-   
+  useEffect(() => {
+      cargarNombre()
+     }, [])
+
    const cargarNombre=()=>{
      firestore().collection('users').doc(auth().currentUser?.email as any).get()
      .then(documentSnapshot => {
@@ -26,268 +38,186 @@ export const ShootCamara = () => {
        }
      }); 
    }
-
-   const subirGeo=()=>{    
-      
+   const subirGeo=()=>{      
     try { 
-      firestore().collection("users").doc(auth().currentUser?.email as any ).collection("geoShot").add({
+      firestore().
+      collection("users").
+      doc(auth().currentUser?.email as any )
+      .collection("geoShot")
+      .add({
           latitud:inicialPosition.latitude,
           longitud:inicialPosition.longitude,
-          photo:urlFirebaseStare,
+          photo:urlFirebaseStore,
           nombreUser:nombreUser?.nombre,
-          hora:HoraActual
- })   
+          hora:formattedTime,
+          photoPerfil:photoPerfil
+ }).then(()=>{
+  back()
+ }).finally(()=>{
+  navigation.navigate("UfoHome")
 
- Alert.alert("Avistamiento reportado")
+ })
+
+
     } catch (error) {
-      console.log("hubo un error",error)
+   Alert.alert(error as any)
     }
    
    }
-   const camera = useRef<Camera>(null)
+
    const sacarPhoto=async()=>{
     setbotonprecionado(true)
     try {
       const photo = await camera.current!.takePhoto ({
-        enableAutoRedEyeReduction:true
+        enableAutoRedEyeReduction:true,
+        flash:"off"
+        
+
       })   
-     
+
       let cortarUrl=photo.path.substring(40,58)
       const reference = storage().ref( `avistamietnosUser/${nombreUser?.nombre}/${cortarUrl}` )
       await reference.putFile(photo.path);
       
       const url = await storage().ref(`avistamietnosUser/${nombreUser?.nombre}/${cortarUrl}`).getDownloadURL()
-      seturlFirebaseStare(url)
+     console.log(url)
+      seturlFirebaseStore(url)
     } catch (error:any) {
       Alert.alert(error)
     
     }
   }
 
-     const requestCamaraPermision=useCallback(async()=>{
-     const permision=await Camera.requestCameraPermission() 
-     if(permision=="denied") await   Linking.openSettings()
-   
-},[])
-useEffect(() => {
-  // requestCamaraPermision()
-  cargarNombre()
-  
- }, [])
+//      const requestCamaraPermision=useCallback(async()=>{
+//      const permision=await Camera.requestCameraPermission() 
+//       if(permision=="denied") await   Linking.openSettings()
+//    setpermissionsCamara(permision)
+// },[])
+
 
  const back=()=>{
-  seturlFirebaseStare("")
+  seturlFirebaseStore("")
   setbotonprecionado(!botonprecionado)
  }
-
-
-
  if (device == null) return <ActivityIndicator style={{marginTop:"50%"}}  color={"white"} size={60} />
  if(botonprecionado===true){
-  if(urlFirebaseStare =="")
+  if(urlFirebaseStore =="")
   return <Loading />
  }
- 
   return(
-     <View style={{flex:1, backgroundColor:"black"}} >  
+     <View style={style.contianer} >  
     {
-      urlFirebaseStare == "" ?  
-       <Camera
-      ref={camera}
-      photo={true}
-      style={{width:"100%",height:"100%"}}
-      device={device}
-      isActive={isFOcused}
-      preset="photo"
-      enableZoomGesture
-    
-    />
-    :
-
-    <View>
-    <Image style={{position:"relative", width:640, height:600,alignSelf:"center",resizeMode:"contain"}} source={{uri:  urlFirebaseStare }} />
-    </View> 
-  
+      //if Url is empty,we are going to show camara,other wise the Image
+          urlFirebaseStore == "" 
+          ?  
+            <Camera
+            ref={camera}
+            photo={true}
+            style={style.DimisionCamara}
+            device={device}
+            isActive={isFOcused}
+            preset="photo"
+            enableZoomGesture 
+            zoom={128}  
+            
+            
+             
+                   
+          />
+        :
+        <Image style={[style.image,{ width:width *4,height:height *0.8,}]} source={{uri:urlFirebaseStore}} />
+     
   }
     {
+      //if camara is avilable and urlFirebaseStore is empty , that want to say is before caputure camara
+       
       Camera &&
-    <View style={{position:"absolute",alignItems:"center", left:0,right:0,top:80}} >
-  <TouchableOpacity onPress={()=>sacarPhoto()} >
-  {
-  urlFirebaseStare == ""
-  &&
-  <>
-  <Icon style={{justifyContent:"flex-end",height:60, width:60 ,marginLeft:20, marginTop:510}} name="ellipse-outline" size={60} color="white" />   
-<TouchableOpacity onPress={()=>Alert.alert("click")} >
-  <Icon name="flash-outline"  color={"white"} size={40} style={{position:"absolute",bottom:570,right:200}}  />
-</TouchableOpacity>
-  
-
-  </>
-  
-  
-} 
-
+      <View style={{position:"absolute",alignItems:"center", left:0,right:0,top:80}} >
+    <TouchableOpacity onPress={()=>sacarPhoto()} >
+    {
+    urlFirebaseStore == ""
+    &&
+    <>
+    <Icon style={{justifyContent:"flex-end",height:60, width:60 ,marginLeft:20, marginTop:"100%"}} name="ellipse-outline" size={60} color="white" />   
+  <TouchableOpacity onPress={()=>Alert.alert("holaa")} >
+    <Icon name="flash-outline"  color={"white"} size={40} style={{position:"absolute",bottom:570,right:200}}  />
   </TouchableOpacity>
- 
-    </View>
+    </>  
+  } 
+    </TouchableOpacity>
+      </View>
+           
     }
-  
- <View style={{alignItems:"center",justifyContent:"center", flex:1}} > 
- 
- 
-
-  <TouchableOpacity  onPress={()=>subirGeo()} style={{ position:"absolute",bottom:-55,left:260}}  >
-  <Icon name="checkmark" size={40} color="white" />
-  
-  
-     
-    </TouchableOpacity>  
-  
 
 
-  
-  
- 
+{/*  botones de aceptar la foto o no*/}
 
-
-
- 
-
-
-    </View>
-   
- <TouchableOpacity onPress={()=>back()} style={{backgroundColor:"black", width:250,padding:10}}  >
- <Icon style={{alignItems:"center", marginHorizontal:88}} color={"white"} name="arrow-back-circle-sharp" size={40}  />
-  </TouchableOpacity>
-    
-     </View>
- 
-
+ <View style={style.containerCheckMark} > 
+       <TouchableOpacity onPress={()=>subirGeo()} style={style.checkmark}  >
+          <Icon name="checkmark" size={40} color="black" />   
+        </TouchableOpacity>  
+  </View>
+      
+    <TouchableOpacity onPress={()=>back()} style={style.arrowBack}  >
+    <Icon style={{alignItems:"center", marginHorizontal:88}} color={"black"} name="arrow-back-circle-sharp" size={40}  />
+      </TouchableOpacity>
+        
+</View>
   )
-
-
 }
-
-
-
-
 const Loading=()=> {
 return(
   <View style={{flex:1}} >
-<ActivityIndicator style={{marginTop:"50%"}}  color={"white"} size={60} />
-  <Text style={{color:"white", fontSize:20,fontWeight:"600",alignSelf:"center"}} >Espere un Momento</Text>
+<ActivityIndicator style={{marginTop:"50%"}}  color={"black"} size={60} />
+  <Text style={{color:"black", fontSize:20,fontWeight:"600",alignSelf:"center"}} >Espere un Momento</Text>
   </View>
   
 )
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React,{useEffect} from 'react'
-// import { View, Text, TouchableOpacity, Image, Button, ActivityIndicator } from 'react-native';
-// import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-// import { useState } from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import Geolocation from "@react-native-community/geolocation";
-import { Location, useLocation } from '../Hooks/useLocation';
-import auth from '@react-native-firebase/auth';
-import notifee, { AndroidVisibility } from '@notifee/react-native';
-import { useIsForeground } from '../Componets/useIsForeground';
-import { UseHours } from '../Hooks/UseHour';
-// export const ShootCamara = () => {
-//   const [tempUri, settempUri] = useState("")
+const style=StyleSheet.create({
+  contianer:{
+    flex:1,
+    backgroundColor:"white",
+    
+  },
+  image:{
+    position:"relative",
    
-//   const takePhoto=()=>{
-  
-//     launchCamera({
-//       mediaType:"mixed",
-//     },(resp)=>{
-//           if(resp.didCancel) return 
-//           if(!resp.assets![0].uri!) return
-//           settempUri(resp.assets![0].uri!)
-            
-//     })
+    alignSelf:"center",
+    resizeMode:"contain"
+  },
+  DimisionCamara:{
+    width:"100%",
+    height:"100%"
+  },
+  CaputureIcon:{
+    justifyContent:"flex-end",
+    color:"white",
+    height:60,
+     width:60 
+     ,marginLeft:20, 
+     marginTop:510
+  },
+  checkmark:{
+    position:"absolute",
+    bottom:-55,
+    left:260
+  },
+  containerCheckMark:{
+    alignItems:"center",
+    justifyContent:"center",
+     flex:1
+  },
+  arrowBack:{
+    backgroundColor:"white", 
+    width:250,
+    padding:10
+  },
+  ContainerCpatureIcon:{
+    position:"absolute",alignItems:"center", left:0,right:0,top:80
+  }
+})
 
-
-//   }
-
-// // useEffect(()=>{
-// // takePhoto()
-// // },[])
-
-
-//   const PhthoGalery=()=>{
-//     launchImageLibrary({
-//       mediaType:"photo",
-//     },(resp)=>{
-//           if(resp.didCancel) return 
-//           if(!resp.assets![0].uri!) return
-//           settempUri(resp.assets![0].uri!)
-            
-//     })
-//   }
-
-//   return (
-//     <View style={{flex:1, backgroundColor:"black"}} >
-
-//     <Text style={{color:"white", fontSize:30, fontWeight:"900", alignSelf:"center", marginTop:15}}>UfoVni</Text>
-
-//         <TouchableOpacity onPress={()=>takePhoto()} style={{alignItems:"center", marginTop:"60%", backgroundColor:"#0096f6", borderRadius:20}} >
-//           <Text style={{color:"white", fontSize:25, fontWeight:"bold", marginBottom:10, marginTop:1}}  >Captura un Ovni </Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity onPress={()=>PhthoGalery()} style={{alignItems:"center", marginTop:"60%"}} >
-//           <Text >abrir galeria </Text>
-//         </TouchableOpacity>
-//      {
-//       (tempUri) && (
-              
-//         <Image 
-//          source={{uri:tempUri}}
-//          style={{
-//           marginTop:-260,
-//           width:"100%",
-//           height:300
-//          }}
-//          />
-
-       
-
-         
-//       )
-//      }
-
-// {
-
-
-// (tempUri) && (
-//   <Button 
-//      title="Enviar"
-//      />
-// )
-
-// }
-     
-//     </View>
-
-  
-//   )
-// }
+ 

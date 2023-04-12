@@ -145,7 +145,7 @@ style={{width:140,height:140}}
            
 
 
-<View style={{marginTop:100}} >
+<View style={{marginTop:10}} >
 
 <TouchableOpacity 
 

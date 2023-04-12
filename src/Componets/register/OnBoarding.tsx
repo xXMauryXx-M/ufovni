@@ -1,7 +1,7 @@
 import React,{useState,useRef} from 'react'
 import { FlatList, ImageSourcePropType, Animated, Text, View, useWindowDimensions } from 'react-native';
 import { OnBoardingItems } from './OnBoardingItems';
-import { Paginator } from '../Paginator';
+import { Paginator } from '../helpers/Paginator';
 
 
 interface Slide {
@@ -14,17 +14,17 @@ const items: Slide[] = [
     {
         
         desc: 'Se Capaz de Capturar \n OVNIS y subelo al GPS para que mas personas lo vean',
-        img: require('../assets/imagen.png')
+        img: require('../../assets/imagen.png')
     },
     {
        
         desc: 'Geolocaliza OVNIS\nY Resive Notifiaciones \n cuando Haya uno cerca! ',
-        img: require('../assets/undraw_Delivery_re_f50b.png')
+        img: require('../../assets/undraw_Delivery_re_f50b.png')
     },
     {
        
         desc: 'Mira las zonas con Mas \navistamientos de la Semana \n y ve a visitarlas',
-        img: require('../assets/undraw_Reminder_re_fe15.png')
+        img: require('../../assets/undraw_Reminder_re_fe15.png')
     },
    
 ]

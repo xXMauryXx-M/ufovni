@@ -10,6 +10,7 @@ export const MapBoxs=()=>{
 <Text style={{color:"white"}} >hola mundo</Text>
 <View style={{width:300,height:300}} >
 <MapboxGL.MapView
+projection="globe"
 style={{flex:1}}
 styleURL={"mapbox://styles/mauryc/cl98i8ra8003714o6ipeuyo27"}
 
