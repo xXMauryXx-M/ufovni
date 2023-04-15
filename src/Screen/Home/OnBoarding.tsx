@@ -1,36 +1,45 @@
 import React,{ useEffect} from 'react'
-import { Text, View, Image, StyleSheet, Alert } from 'react-native';
+import { Text, View, Image, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
+import { askLocationPermission1 } from '../../Store/Permision/thunks';
 import firestore from '@react-native-firebase/firestore';
 import auth from "@react-native-firebase/auth"
+import { Alert } from 'react-native';
 
 
 export const OnBoarding = () => {
- const {correo,contraseña,nombre,photoPerfil}=  useSelector((state:any)=>state.form)
+  const {correo,contraseña,nombre,photoPerfil}=  useSelector((state:any)=>state.form)
  const nanvigation= useNavigation<any>()
- const dispatch= useDispatch<any>()
+  const dispatch= useDispatch<any>()
     useEffect(() => {
+
      nanvigation.setOptions({
         presentation:"modal",
         gestureDirection:"vertical",
      })
+      
     }, [])
+    
+
     const onSingup =async()=>{
       try {
       //  const authuser= await auth().createUserWithEmailAndPassword(email, password)
       const authuser= await auth().createUserWithEmailAndPassword(correo, contraseña)
+        
        firestore().collection("users").doc(authuser.user.email as any).set({
         correo,
+        contraseña,
         nombre,
-  
+        photoPerfil
 
        }).then(()=>{
-          Alert.alert("usuario creado correctamnet")
-       }).catch((error)=>{
-            console.log(error)
-       })
+        Alert.alert("usuario creado correctamnet")
+     }).catch((error)=>{
+          console.log(error)
+     })
         
 
        

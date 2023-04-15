@@ -1,41 +1,26 @@
 import React from 'react'
 import{Image} from "react-native"
 import { Marker } from 'react-native-maps'
-import { infoUserTypes } from '../../Screen/UfoHome';
-
-import { useFirebaseData } from '../../Hooks/useFirebaseData';
-
-
-interface propsToMarkers{
-   geo:any,
-   handlePresentBPress:any
-   infoUser?:infoUserTypes
-   setinfoUfo?:any
-}
-
-export const Markers = ({geo,handlePresentBPress, infoUser,setinfoUfo }:propsToMarkers) => {  
-   const {setUfosighting}=useFirebaseData()
-
-   const PassInfoToBottomShet=(ele:any)=>{
-    setinfoUfo(ele)
+export const Markers = ({ geos  ,handlePresentBPress,
+  infoUser ,
+  setdata}:any) => {
+ 
+    
+  const PassInfoToBottomShet=(ele:any)=>{   
+  //  setdata(ele)
     handlePresentBPress()
-
-  }
+  
+   }
+  return (
    
-//PassInfoToBottomShet(geo)
-  return (  
-<Marker
-  onPress={()=>PassInfoToBottomShet(geo)}        
- 
+ <Marker
+  onPress={()=>PassInfoToBottomShet(geos)}             
        coordinate={{
-          latitude:geo.latitud,
-          longitude:geo.longitud
+          latitude:geos.latitud,
+          longitude:geos.longitud
        }}
-       key={geo.key}
+       key={geos.key}
      > 
-
- 
-
 
 
 <Image 
@@ -43,10 +28,9 @@ style={{
       position:"relative",
       width:42,
       height:42,
-      tintColor:geo.nombreUser==infoUser?.nombre? "" : "#0096f6",
+      tintColor:geos.nombreUser==infoUser?.nombre? "" : "black",
     }}
-    source={ geo.nombreUser==infoUser?.nombre?  require("../../assets/beard.png") :  require("../../assets/ufo.png")  } />
-
+    source={ geos.nombreUser==infoUser?.nombre?  require("../../assets/beard.png") :  require("../../assets/ufo.png")  } />
 
  
   </Marker>

@@ -14,11 +14,12 @@ export interface UfosightingProps {
    key:number
  }
 
-export const Map=({handlePresentBPress, bottomSheetRef2, setinfoUfo}:any)=>{
- const {Ufosighting,infoUser,setUfosighting}= useFirebaseData()
+export const Map=({handlePresentBPress,data,setdata,Ufosighting,infoUser}:any)=>{
+
   const [showCompass,setshowCompass] = useState(true)
   const {inicialPosition,getCurrentLocation}= useLocation()
   const mapViewRef=useRef<MapView>() 
+
   const  handleUserLocation=async()=>{
   const {latitude, longitude}= await getCurrentLocation()
        redirection(latitude,longitude)
@@ -33,14 +34,7 @@ export const Map=({handlePresentBPress, bottomSheetRef2, setinfoUfo}:any)=>{
       }
 
 
-       const PassInfoToBottomShet=(ele:any)=>{
-           setUfosighting(ele)
-            handlePresentBPress()
-     
-           }
-
-   
-
+         
 
  return(
 <View style={{flex:1}} >
@@ -48,9 +42,9 @@ export const Map=({handlePresentBPress, bottomSheetRef2, setinfoUfo}:any)=>{
      key={Math.random()*123}
       ref={(el:any)=>mapViewRef.current=el!}
        rotateEnabled
+        maxZoomLevel={18}
        showsCompass={false}
-       showsScale={false}
-      
+       showsScale={false}      
        userLocationUpdateInterval={10000}
        showsUserLocation={showCompass}
        pitchEnabled
@@ -67,12 +61,12 @@ export const Map=({handlePresentBPress, bottomSheetRef2, setinfoUfo}:any)=>{
      >
 
        {
-         Ufosighting.map((sightingData:UfosightingProps)=>  (
+         Ufosighting.map((geos:UfosightingProps)=>  (
              <Markers  
-                 geo={sightingData}    
+                 geos={geos}    
                  handlePresentBPress={handlePresentBPress}
                  infoUser={infoUser!}  
-                 setinfoUfo={setinfoUfo}      
+                 setdata={setdata}      
                                                               
                 />
       ))}

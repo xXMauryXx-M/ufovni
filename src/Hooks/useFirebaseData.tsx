@@ -7,7 +7,13 @@ import auth from '@react-native-firebase/auth';
 export const useFirebaseData = () => {
     const [Ufosighting, setUfosighting] = useState<UfosightingProps[]>([])
     const [infoUser, setinfoUser] = useState<infoUserTypes>()
+
     useEffect(() => {
+     loadRTdata()
+     LoadInfoUser()
+    }, [])
+    
+
         const loadRTdata=()=>{
             const suscriber= 
             firestore().
@@ -37,10 +43,10 @@ export const useFirebaseData = () => {
         });
         }
 
-        loadRTdata()
-        LoadInfoUser()
+       
         
-    }, [])
+   
+
     
 
     return {
