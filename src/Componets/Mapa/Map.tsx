@@ -14,7 +14,7 @@ export interface UfosightingProps {
    key:number
  }
 
-export const Map=({handlePresentBPress,data,setdata,Ufosighting,infoUser}:any)=>{
+export const Map=({handlePresentBPress, rtData, setrtData,PassInfoToBottomShet,nombreUser}:any)=>{
 
   const [showCompass,setshowCompass] = useState(true)
   const {inicialPosition,getCurrentLocation}= useLocation()
@@ -61,12 +61,12 @@ export const Map=({handlePresentBPress,data,setdata,Ufosighting,infoUser}:any)=>
      >
 
        {
-         Ufosighting.map((geos:UfosightingProps)=>  (
+         rtData.map((geos:UfosightingProps)=>  (
              <Markers  
                  geos={geos}    
-                 handlePresentBPress={handlePresentBPress}
-                 infoUser={infoUser!}  
-                 setdata={setdata}      
+                 handlePresentBPress={PassInfoToBottomShet}
+                 infoUser={nombreUser}  
+                  
                                                               
                 />
       ))}

@@ -3,18 +3,14 @@ import{Image} from "react-native"
 import { Marker } from 'react-native-maps'
 export const Markers = ({ geos  ,handlePresentBPress,
   infoUser ,
-  setdata}:any) => {
+  }:any) => {
  
     
-  const PassInfoToBottomShet=(ele:any)=>{   
-  //  setdata(ele)
-    handlePresentBPress()
-  
-   }
+ 
   return (
    
  <Marker
-  onPress={()=>PassInfoToBottomShet(geos)}             
+  onPress={()=>handlePresentBPress(geos)}             
        coordinate={{
           latitude:geos.latitud,
           longitude:geos.longitud

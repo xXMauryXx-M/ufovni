@@ -1,5 +1,5 @@
 import React,{useCallback, useEffect,useMemo,useRef,useState} from 'react'
-import { View, Linking, Alert, TouchableOpacity, Image } from 'react-native';
+import { View, Linking, Alert, TouchableOpacity } from 'react-native';
 import { Map, UfosightingProps } from '../Componets/Mapa/Map';
 import { useSelector } from 'react-redux';
 import { askLocationPermission1 } from '../Store/Permision/thunks';
@@ -8,7 +8,7 @@ import { useLocation } from '../Hooks/useLocation';
 import distance from '@turf/distance';
 import { BottomSheets } from '../Componets/BottomSheet/BottomSheets';
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView, BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { useFirebaseData } from '../Hooks/useFirebaseData';
+
 import { useFocusEffect } from '@react-navigation/native';
 import { BottomsAction } from '../Componets/BottomSheet/BottomsAction';
 import { FlatlistPhoto } from '../Componets/BottomSheet/FlatlistPhoto';
@@ -16,9 +16,6 @@ import { Text } from 'react-native-paper';
 import  Icon  from 'react-native-vector-icons/Ionicons';
 import { AvistamientoUfo } from '../Componets/BottomSheet/AvistamientoUfo';
 import auth from '@react-native-firebase/auth';
-import MapView, { Marker } from 'react-native-maps';
-import { mapStyle } from '../MapStyle/Mpa';
-import { Markers } from '../Componets/Mapa/Markers';
 
  export interface infoUserTypes{
   contraseña:String 
@@ -28,49 +25,11 @@ import { Markers } from '../Componets/Mapa/Markers';
 }
 export const UfoHome = () => {
   const [filteredArray, setfilteredArray] = useState<UfosightingProps[]>([])  
-  const {inicialPosition,hasLocation,getCurrentLocation}= useLocation()
+  const {inicialPosition,hasLocation}= useLocation()
   const {LocationStatus}=  useSelector((state:any)=>state.permision)
-
-  const [Ufosighting, setUfosighting] = useState<UfosightingProps[]>([])
-  const [infoUser, setinfoUser] = useState<infoUserTypes>()
-
-  useEffect(() => {
-   loadRTdata()
-   LoadInfoUser()
-  }, [])
-  
-
-      const loadRTdata=()=>{
-          const suscriber= 
-          firestore().
-          collectionGroup("geoShot").
-          onSnapshot(querySnapshot=>{
-          const array:any=[]
-          querySnapshot.forEach(documentSnapshot=>{
-          array.push({
-          ...documentSnapshot.data(),
-          key:documentSnapshot.id
-          })
-          })
-             setUfosighting(array)       
-          })
-          return ()=>suscriber()
-      }
-
-      const LoadInfoUser=()=>{
-      firestore().
-      collection('users').
-      doc(auth().currentUser?.email as any)
-      .get()
-        .then((documentSnapshot:any) => { 
-             if(documentSnapshot.exists) {
-          setinfoUser (documentSnapshot.data());
-        }
-      });
-      }
-
-
-  const [data, setdata] = useState([])
+  const [nombreUser, setnombreUser] = useState([])
+  const [rtData, setrtData] = useState([])
+  const [infoGeoShot, setinfoGeoShot] = useState({})
   const handlePresentAPress = useCallback(() => {
   if (bottomSheetRef.current) {
   bottomSheetRef.current.present();
@@ -102,23 +61,58 @@ export const UfoHome = () => {
    useEffect(()  => {
     loadFIlterRtData()
   }, [])
-const getaAllUfoSightings=()=>{
-          Ufosighting.map((ele:any)=>{
-            let from = [inicialPosition.latitude, inicialPosition.longitude]
-            let to = [ele.latitud, ele.longitud]
-            let distances = distance(from, to, {units:"kilometers"});
-            let aproximar= distances.toFixed(0);
-         if( parseInt(aproximar)==0 ){
-         if(ele.nombreUser==infoUser?.nombre){
-         return
+// const getaAllUfoSightings=()=>{
+//           Ufosighting.map((ele:any)=>{
+//             let from = [inicialPosition.latitude, inicialPosition.longitude]
+//             let to = [ele.latitud, ele.longitud]
+//             let distances = distance(from, to, {units:"kilometers"});
+//             let aproximar= distances.toFixed(0);
+//          if( parseInt(aproximar)==0 ){
+//          if(ele.nombreUser==infoUser?.nombre){
+//          return
     
-        }else{
-         //  onDisplayNotification(ele)
-        }
-       // onDisplayNotification(ele)
+//         }else{
+//          //  onDisplayNotification(ele)
+//         }
+//        // onDisplayNotification(ele)
     
-      }
-      })}
+//       }
+//       })}
+
+
+
+const cargarNombre=()=>{
+  firestore().collection('users').doc(auth().currentUser?.email as any).get()
+  .then(documentSnapshot => {
+    if(documentSnapshot.exists) {
+      setnombreUser (documentSnapshot.data() as any);
+    }
+  });
+}
+
+const loadRTdata=()=>{
+  const suscriber=  firestore().collectionGroup("geoShot").onSnapshot(querySnapshot=>{
+      const maz:any=[]
+      querySnapshot.forEach(documentSnapshot=>{
+          maz.push({
+              ...documentSnapshot.data(),
+              key:documentSnapshot.id
+          })
+      })
+
+
+      setrtData(maz)
+     
+      
+    
+      
+  })
+  return ()=>suscriber()
+}
+
+
+
+
 const loadFIlterRtData=()=>{
         const suscriber=  firestore().collectionGroup("geoShot").onSnapshot(querySnapshot=>{
         const arrayFilter:any=[]
@@ -161,12 +155,20 @@ const seguir=(item:any)=>{
  
 }
 const snapPoints=useMemo(() => ["10%","26%"], []);
-const snapPoint2=useMemo(() => ["20%","30%"], []);
+const snapPoint2=useMemo(() => ["30%","60%"], []);
 const bottomSheetRef =useRef<BottomSheetModal>(null);  
 const bottomSheetRef2=useRef<BottomSheetModal>(null);
 const bottomSheetref4=useRef<BottomSheetModal> (null)
 const bottomSheetRef3=useRef<BottomSheetModal>(null)
+const  PassInfoToBottomShet=(ele:any)=>{  
 
+ 
+
+    setinfoGeoShot(ele)
+    handlePresentBPress()
+  
+   } 
+  
 
 const handlePresent4 = () => {
   if(bottomSheetref4.current){
@@ -195,93 +197,20 @@ const handleDismisBPress = useCallback(() => {
   useEffect(() => {
    handlePresentAPress()
  }, [])
- const [showCompass,setshowCompass] = useState(true)
 
-  const mapViewRef=useRef<MapView>() 
-  
-  const  handleUserLocation=async()=>{
-  const {latitude, longitude}= await getCurrentLocation()
-       redirection(latitude,longitude)
-     }
-     const redirection=(latitude:number,longitude:number)=>{
-       mapViewRef.current?.animateCamera({
-         center:{
-           latitude,
-           longitude
-         }
-       })
-      }
-   
-      const PassInfoToBottomShet=(ele:any)=>{   
-        setdata(ele)
-          handlePresentBPress()
-        
-         }
 
    return (
 <View style={{flex:1}} > 
-  
-
-<MapView
-     key={Math.random()*123}
-      ref={(el:any)=>mapViewRef.current=el!}
-       rotateEnabled
-        maxZoomLevel={18}
-       showsCompass={false}
-       showsScale={false}      
-       userLocationUpdateInterval={10000}
-       showsUserLocation={showCompass}
-       pitchEnabled
-       renderToHardwareTextureAndroid
-       zoomControlEnabled={false}
-       customMapStyle={mapStyle}
-       style={{flex:1}}
-       initialRegion={{
-             latitude:inicialPosition.latitude ,
-             longitude:inicialPosition.longitude,
-             longitudeDelta:0,
-             latitudeDelta:0             
-           }}
-     >
-
-       {
-         Ufosighting.map((geos:UfosightingProps)=>  (
-          <Marker
-          onPress={()=>PassInfoToBottomShet(geos)}             
-               coordinate={{
-                  latitude:geos.latitud,
-                  longitude:geos.longitud
-               }}
-               key={geos.key}
-             > 
-        
-        
-        <Image
-        style={{
-              position:"relative",
-              width:42,
-              height:42,
-              tintColor:geos.nombreUser==infoUser?.nombre? "" : "black",
-            }}
-            source={ geos.nombreUser==infoUser?.nombre?  require("../assets/beard.png") :  require("../assets/ufo.png")  } />
-        
-         
-          </Marker>
-      ))}
-     </MapView>
-       
-         <TouchableOpacity
-       activeOpacity={0.8}
-       onPress={()=>handleUserLocation()}
-      //  style={style.compass}
-       >
-       <Icon name='compass'size={45} color={"white"}   />
-         </TouchableOpacity>
-  
-
+    <Map
+     handlePresentBPress={handlePresentBPress}
+     rtdata={rtData} 
+     setrtData={setrtData}
+     PassInfoToBottomShet={PassInfoToBottomShet}
+     nombreUser= {nombreUser}
+     />
 
   
-<BottomSheetModalProvider  >  
+  <BottomSheetModalProvider  >
    
 
   <BottomSheetModal
@@ -298,9 +227,9 @@ const handleDismisBPress = useCallback(() => {
                bottomSheetRef={bottomSheetRef}
                bottomSheetRef3={bottomSheetRef3}
                bottomSheetRef2={bottomSheetRef2}
-               infoGeoShot={Ufosighting}
-                infoUser={infoUser}
-              />
+               infoGeoShot={rtData}
+                infoUser={nombreUser}
+               />
 
 
                </BottomSheetView>
@@ -331,7 +260,7 @@ const handleDismisBPress = useCallback(() => {
          <FlatlistPhoto
            item={item}
            handleDeismis4={handleDeismis4}
-           setinfoGeoShot={setUfosighting}
+           setinfoGeoShot={setrtData}
            handlePresentBPress={handlePresentBPress}
            inicialPosition ={inicialPosition}
        
@@ -352,7 +281,6 @@ const handleDismisBPress = useCallback(() => {
 
 
 
-
         <BottomSheetModal
            style={{flex:1}}
            ref={bottomSheetRef2}
@@ -362,8 +290,8 @@ const handleDismisBPress = useCallback(() => {
         >
         <AvistamientoUfo
           // handleDismissAPress={handleDismisBPress()}
-          data={data}
-          nombreUser={infoUser}
+          infoGeoShot={rtData}
+          nombreUser={nombreUser}
           seguir={seguir}
        />
         </BottomSheetModal>
