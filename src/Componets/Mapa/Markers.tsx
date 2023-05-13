@@ -24,7 +24,7 @@ style={{
       position:"relative",
       width:42,
       height:42,
-      tintColor:geos.nombreUser==infoUser?.nombre? "" : "black",
+
     }}
     source={ geos.nombreUser==infoUser?.nombre?  require("../../assets/beard.png") :  require("../../assets/ufo.png")  } />
 

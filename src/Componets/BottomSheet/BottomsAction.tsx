@@ -7,21 +7,25 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { useFirebaseData } from '../../Hooks/useFirebaseData';
 
 interface props {
+  near:any
     bottomSheetRef:React.RefObject<BottomSheetModalMethods> ,
     handlePresent4:any
     bottomSheetRef3:React.RefObject<BottomSheetModalMethods> ,
     bottomSheetRef2:React.RefObject<BottomSheetModalMethods>,
-    infoGeoShot:any,
+    Ufosighting:any,
     infoUser:any
 
 
 }
 
-export const BottomsAction = ({bottomSheetRef, handlePresent4, bottomSheetRef3,bottomSheetRef2,infoGeoShot,infoUser}:props) => {
+export const BottomsAction = ({near,bottomSheetRef, handlePresent4, bottomSheetRef3,bottomSheetRef2,Ufosighting,infoUser}:props) => {
     const navigation=useNavigation<any>()
     const windowWith=Dimensions.get("window").width;
+    const {countOfsighting}= useFirebaseData()
+
     const [nombreUser, setnombreUser] = useState<FirebaseFirestoreTypes.DocumentData>()
 
     const cargarNombre=()=>{
@@ -49,14 +53,18 @@ export const BottomsAction = ({bottomSheetRef, handlePresent4, bottomSheetRef3,b
           bottomSheetRef2.current?.present();
         }
       },[])
+
+     
+
   return (
 <View  >
 <View style={{flexDirection:"row"}} >
   <View style={{marginVertical:-3}} >
   <Image
    style={styles.imagenUser}
-  source={{uri:infoGeoShot.photoPerfil}} />
+  source={require("../../assets/beard.png")} />
   </View>
+
 
 <Text style={{color:"black", fontSize:20, fontWeight:"bold"}}>   Hola {nombreUser?.nombre}!  </Text>               
 
@@ -65,13 +73,13 @@ export const BottomsAction = ({bottomSheetRef, handlePresent4, bottomSheetRef3,b
 <View style={{flexDirection:"row",marginTop:20}} >
 
 <View style={{flexDirection:"column",marginLeft:10}} >
-<Text style={styles.textInfo} >Avistamientos:5</Text>
-  <Text style={styles.textInfo} >ovni cerca:5</Text>
-  <Text style={styles.textInfo} >tiempo:30</Text>
+<Text style={styles.textInfo} >ovni cerca:{near.length}</Text>
+  <Text style={styles.textInfo} >tus avistamientos:{countOfsighting}</Text>
+  
 
 </View>
 
-<View style={{flexDirection:"row",alignSelf:"flex-end",marginLeft:"35%"}} >
+<View style={{flexDirection:"row",marginLeft:"25%"}} >
 <TouchableOpacity onPress={()=>handlePresent4()} style={{height:40,width:40,backgroundColor:"orange",alignSelf:"center",marginBottom:30,borderRadius:10}} >
              <Icon name='navigate-circle-outline' size={40} color={"white"} />
                </TouchableOpacity>

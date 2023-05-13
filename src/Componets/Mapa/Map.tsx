@@ -14,12 +14,11 @@ export interface UfosightingProps {
    key:number
  }
 
-export const Map=({handlePresentBPress, rtData, setrtData,PassInfoToBottomShet,nombreUser}:any)=>{
+export const Map=({mapViewRef , handlePresentBPress, Ufosighting, setUfosighting,PassInfoToBottomShet,infoUser}:any)=>{
 
   const [showCompass,setshowCompass] = useState(true)
   const {inicialPosition,getCurrentLocation}= useLocation()
-  const mapViewRef=useRef<MapView>() 
-
+  
   const  handleUserLocation=async()=>{
   const {latitude, longitude}= await getCurrentLocation()
        redirection(latitude,longitude)
@@ -39,10 +38,9 @@ export const Map=({handlePresentBPress, rtData, setrtData,PassInfoToBottomShet,n
  return(
 <View style={{flex:1}} >
      <MapView
-     key={Math.random()*123}
       ref={(el:any)=>mapViewRef.current=el!}
        rotateEnabled
-        maxZoomLevel={18}
+       minZoomLevel={9}
        showsCompass={false}
        showsScale={false}      
        userLocationUpdateInterval={10000}
@@ -60,16 +58,16 @@ export const Map=({handlePresentBPress, rtData, setrtData,PassInfoToBottomShet,n
            }}
      >
 
-       {
-         rtData.map((geos:UfosightingProps)=>  (
+        {
+         Ufosighting.map((geos:UfosightingProps)=>  (
              <Markers  
                  geos={geos}    
                  handlePresentBPress={PassInfoToBottomShet}
-                 infoUser={nombreUser}  
+                 infoUser={infoUser}  
                   
                                                               
                 />
-      ))}
+      ))} 
      </MapView>
        
          <TouchableOpacity
@@ -137,7 +135,7 @@ const style=StyleSheet.create({
 // import { AvistamientoUfo } from '../BottomSheet/AvistamientoUfo';
 // import { Markers } from './Markers';
 // import { FlatlistPhoto } from '../BottomSheet/FlatlistPhoto';
-import { infoUserTypes } from '../../Screen/UfoHome';
+
 import { useFirebaseData } from '../../Hooks/useFirebaseData';
 
 // interface GeoShot{

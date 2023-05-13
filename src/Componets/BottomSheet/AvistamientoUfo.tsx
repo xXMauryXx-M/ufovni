@@ -1,13 +1,10 @@
 import { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useFocusEffect } from '@react-navigation/native';
 import React from 'react'
-import { View, Text, Image, useWindowDimensions, StyleSheet, TouchableHighlight } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text, Image, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useFirebaseData } from '../../Hooks/useFirebaseData';
 
-export const AvistamientoUfo = ({data ,nombreUser,seguir}:any) => {
-
- const {width,height} = useWindowDimensions()
+export const AvistamientoUfo = ({infoGeoShot ,infoUser,seguir}:any) => {
   return (
     <BottomSheetView  style={{flex:1}}>         
        <View style={style.contianer} >
@@ -15,19 +12,19 @@ export const AvistamientoUfo = ({data ,nombreUser,seguir}:any) => {
      <Image
         style={{height:60,width:60,}}
         source={require("../../assets/man.png")}  />     
-           <Text style={[style.TextInfoSighting,{top:15}]}>Nombre:{data.nombreUser ==nombreUser?.nombre ? "Tu publicacion" : "Ferederico" }</Text>
+           <Text style={[style.TextInfoSighting,{top:15}]}>Nombre:{infoGeoShot.nombreUser ==infoUser?.nombre ? "Tu publicacion" : "Ferederico" }</Text> 
            <Text  style={[style.TextInfoSighting,{top:35}]}>hora: <Text style={{color:"orange"}} >12:21</Text></Text>
            <Text  style={[style.TextInfoSighting,{top:55}]}>Geolocalizacion:El salvador</Text>
-           <Text style={{color:"white", fontSize:20, fontWeight:"bold",position:"absolute",right:0,bottom:35}}>{data.user} <Text style={{fontSize:15}} >{data.hora}</Text> </Text> 
+           <Text style={{color:"white", fontSize:20, fontWeight:"bold",position:"absolute",right:0,bottom:35}}>{infoGeoShot.user}  <Text style={{fontSize:15}} >{infoGeoShot.hora}</Text> </Text> 
      </View>
 
             
 
           <View style={{marginTop:100}} >
-              <Image style={style.UfoSightingPhoto} source={{uri:data.photo}} /> 
+              <Image style={style.UfoSightingPhoto} source={{uri:infoGeoShot.photo}} /> 
           </View>    
 
-          <TouchableHighlight style={style.boton} onPress={()=>seguir(data)} >
+          <TouchableHighlight style={style.boton} onPress={()=>seguir(infoGeoShot)} >
                <Icon style={{textAlign:"center"}} name='navigate-circle-sharp' size={20} />  
           </TouchableHighlight>   
          

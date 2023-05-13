@@ -6,12 +6,12 @@ import { View, Text, TouchableOpacity, Image,useWindowDimensions, ActivityIndica
 interface props{
     handleDeismis4: () => void,
     item:any,
-    setinfoGeoShot:any,
+    setUfosighting:any,
     handlePresentBPress:any,
     inicialPosition:any
 }
 
-export const FlatlistPhoto=({item,setinfoGeoShot,handlePresentBPress,inicialPosition}:props)=>{
+export const FlatlistPhoto=({item,setUfosighting,handlePresentBPress,inicialPosition}:props)=>{
    const {height,width}=useWindowDimensions()
    const [loadingImage,setloadingImage,]=useState(false)
    const [distanceKilometros, setdistanceKilometros] = useState("")

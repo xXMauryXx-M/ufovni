@@ -1,15 +1,15 @@
-import React,{useEffect,useRef,useCallback,useState} from "react"
-import { ActivityIndicator, View, Text, Linking, TouchableOpacity, Alert, Image, StyleSheet, useWindowDimensions } from 'react-native';
-import { useCameraDevices,  Camera, CameraPermissionRequestResult} from "react-native-vision-camera"
+import React,{useEffect,useRef,useState} from "react"
+import { ActivityIndicator, View, Text,  TouchableOpacity, Alert, Image, StyleSheet, useWindowDimensions } from 'react-native';
+import { useCameraDevices,  Camera} from "react-native-vision-camera"
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import {PermissionsAndroid} from 'react-native';
+import { useIsFocused} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { UseHours } from '../Hooks/UseHour';
 import auth from '@react-native-firebase/auth';
 import { useLocation } from "../Hooks/useLocation";
 import { useSelector } from 'react-redux';
+
 export const ShootCamara = () => {
   const isFOcused= useIsFocused()
   const [nombreUser, setnombreUser] = useState<FirebaseFirestoreTypes.DocumentData>()
@@ -18,19 +18,14 @@ export const ShootCamara = () => {
   const devices=useCameraDevices()
   const device= devices.back
   const {formattedTime}=UseHours()
-  const [,setpermissionsCamara]=useState<CameraPermissionRequestResult>()
   const {inicialPosition}= useLocation()
   const {width,height} =useWindowDimensions()
   const camera = useRef<Camera>(null)
-  const [flashOn, setFlashOn] = useState(false);
-  const  navigation =useNavigation<any>()
   const {photoPerfil}=  useSelector((state:any)=>state.form)
- 
   useEffect(() => {
-      cargarNombre()
+    LoadInfoUser()
      }, [])
-
-   const cargarNombre=()=>{
+const LoadInfoUser=()=>{
      firestore().collection('users').doc(auth().currentUser?.email as any).get()
      .then(documentSnapshot => {
        if (documentSnapshot.exists) {
@@ -38,7 +33,7 @@ export const ShootCamara = () => {
        }
      }); 
    }
-   const subirGeo=()=>{      
+const uploadUfoSingting=()=>{      
     try { 
       firestore().
       collection("users").
@@ -52,12 +47,8 @@ export const ShootCamara = () => {
           hora:formattedTime,
           photoPerfil:photoPerfil
  }).then(()=>{
-  back()
- }).finally(()=>{
-  navigation.navigate("UfoHome")
-
+ Alert.alert("subido con exito")
  })
-
 
     } catch (error) {
    Alert.alert(error as any)
@@ -65,7 +56,7 @@ export const ShootCamara = () => {
    
    }
 
-   const sacarPhoto=async()=>{
+const sacarPhoto=async()=>{
     setbotonprecionado(true)
     try {
       const photo = await camera.current!.takePhoto ({
@@ -87,15 +78,7 @@ export const ShootCamara = () => {
     
     }
   }
-
-//      const requestCamaraPermision=useCallback(async()=>{
-//      const permision=await Camera.requestCameraPermission() 
-//       if(permision=="denied") await   Linking.openSettings()
-//    setpermissionsCamara(permision)
-// },[])
-
-
- const back=()=>{
+const back=()=>{
   seturlFirebaseStore("")
   setbotonprecionado(!botonprecionado)
  }
@@ -104,6 +87,8 @@ export const ShootCamara = () => {
   if(urlFirebaseStore =="")
   return <Loading />
  }
+
+
   return(
      <View style={style.contianer} >  
     {
@@ -118,31 +103,29 @@ export const ShootCamara = () => {
             isActive={isFOcused}
             preset="photo"
             enableZoomGesture 
-            zoom={128}  
-            
-            
-             
-                   
+            zoom={128}      
           />
         :
-        <Image style={[style.image,{ width:width *4,height:height *0.8,}]} source={{uri:urlFirebaseStore}} />
+         <Image
+          style={[style.image,{ width:width *4,height:height *0.8,}]}
+          source={{uri:urlFirebaseStore}} 
+         />
      
   }
     {
       //if camara is avilable and urlFirebaseStore is empty , that want to say is before caputure camara
-       
       Camera &&
       <View style={{position:"absolute",alignItems:"center", left:0,right:0,top:80}} >
-    <TouchableOpacity onPress={()=>sacarPhoto()} >
+         <TouchableOpacity onPress={()=>sacarPhoto()} >
     {
     urlFirebaseStore == ""
     &&
-    <>
-    <Icon style={{justifyContent:"flex-end",height:60, width:60 ,marginLeft:20, marginTop:"100%"}} name="ellipse-outline" size={60} color="white" />   
-  <TouchableOpacity onPress={()=>Alert.alert("holaa")} >
-    <Icon name="flash-outline"  color={"white"} size={40} style={{position:"absolute",bottom:570,right:200}}  />
-  </TouchableOpacity>
-    </>  
+   
+    <View style={{flex:1}} >
+          <Icon style={{marginTop:height/1.4}} name="ellipse-outline" size={60} color="white" />   
+     
+    </View>
+    
   } 
     </TouchableOpacity>
       </View>
@@ -153,7 +136,7 @@ export const ShootCamara = () => {
 {/*  botones de aceptar la foto o no*/}
 
  <View style={style.containerCheckMark} > 
-       <TouchableOpacity onPress={()=>subirGeo()} style={style.checkmark}  >
+       <TouchableOpacity onPress={()=>uploadUfoSingting()} style={style.checkmark}  >
           <Icon name="checkmark" size={40} color="black" />   
         </TouchableOpacity>  
   </View>
@@ -221,3 +204,8 @@ const style=StyleSheet.create({
 })
 
  
+/*//      const requestCamaraPermision=useCallback(async()=>{
+//      const permision=await Camera.requestCameraPermission() 
+//       if(permision=="denied") await   Linking.openSettings()
+//    setpermissionsCamara(permision)
+// },[]) */
